@@ -22,8 +22,8 @@ ESP32DMASPI::Slave slave;
   CE1      15
 */
 
-//ESP32 解析的jpg不能是8b色深，必须24b色深，所以jpg预留缓存要大一些，约200KB
-uint32_t jpg_max_size = 200 * 1024; //200KB
+//ESP32 解析的jpg不能是8b色深，必须24b色深，所以jpg预留缓存要大一些，300KB足够容纳jpg了
+uint32_t jpg_max_size = 300 * 1024; //200KB
 //树莓派单次SPI传输数据受限4096
 static const uint32_t BUFFER_SIZE = 4096;
 
