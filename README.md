@@ -24,6 +24,9 @@
    
   <img src= 'https://github.com/lixy123/LilyGo-EPD47-SPI-Raspberry/blob/main/main.jpg?raw=true' /> <br/>
    
+  演示视频<br/>
+  https://github.com/lixy123/lilygo_epd47_hc08_mic_voice_txt/blob/main/test2020523.avi <br/>
+  
 <b>三.源码说明:</b>  <br/>
 <b>1.raspberry</b>  <br/>
    A.文件拷到树莓派上 <br/>
