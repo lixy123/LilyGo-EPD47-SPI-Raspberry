@@ -36,8 +36,8 @@ uint32_t jpg_len;
 void rebootESP() {
   Serial.print("Rebooting ESP32: ");
   //delay(100);
-  Serial.flush();  
-  //ESP.restart();  
+  Serial.flush();
+  //ESP.restart();
   esp_restart();
 }
 
@@ -84,7 +84,7 @@ bool save_buff_spiffs()
   uint32_t write_now_num = 0;
   while (writenum < jpg_len)
   {
-    if (jpg_len-writenum>= 1024)
+    if (jpg_len - writenum >= 1024)
       write_now_num = 1024;
     else
       write_now_num = jpg_len - writenum;
@@ -93,7 +93,7 @@ bool save_buff_spiffs()
 
   }
   file.close();
-  Serial.println("save jpg_len=" + String(jpg_len) + ",writenum" +String(writenum));
+  Serial.println("save jpg_len=" + String(jpg_len) + ",writenum" + String(writenum));
 }
 
 void setup() {
@@ -111,25 +111,26 @@ void setup() {
     return;
   }
 
-  epd_init();
-
-  fb = (uint8_t *)heap_caps_malloc(EPD_WIDTH * EPD_HEIGHT / 2, MALLOC_CAP_SPIRAM);
-  memset(fb, 0xFF, EPD_WIDTH * EPD_HEIGHT / 2);
-
-  init_jpglib(fb);
-
   //如果存在上一次留下的jpg,进行显示
   //用来避开spi-slave模式下墨水屏显示不出位图的问题，可能是底层dma, spi资源 冲突
   if (SPIFFS.exists(last_jpg_fn))
   {
+    epd_init();
+
+    fb = (uint8_t *)heap_caps_malloc(EPD_WIDTH * EPD_HEIGHT / 2, MALLOC_CAP_SPIRAM);
+    memset(fb, 0xFF, EPD_WIDTH * EPD_HEIGHT / 2);
+
+    init_jpglib(fb);
+
     memset(fb, 0xFF, EPD_WIDTH * EPD_HEIGHT / 2);
     show_jpg_from_spiffs(last_jpg_fn); // 平均需要2.3秒
 
     //没初始化spi-slave前显示出jpg
     SPIFFS.remove(last_jpg_fn);
 
+    //重启，切换回spi-slave模式
+    rebootESP();
   }
-
 
   // to use DMA buffer, use these methods to allocate buffer
   spi_slave_tx_buf = slave.allocDMABuffer(BUFFER_SIZE);
@@ -183,8 +184,10 @@ void loop() {
     {
       printf("end file\n");
 
-      //将buff转存到spiffs,重启，避开spi-slave模式墨水屏不能显示位图的问题
+      //将buff转存到spiffs,重启
+      //避开spi-slave模式下墨水屏模式无法显示位图的资源冲突问题
       save_buff_spiffs();
+      //重启，切换回墨水屏初始模式
       rebootESP();
 
       jpg_len = 0;
