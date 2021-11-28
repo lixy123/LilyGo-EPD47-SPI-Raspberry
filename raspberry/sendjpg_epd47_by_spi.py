@@ -59,7 +59,13 @@ def send_jpg(fn_jpg):
     spi.writebytes(b'<<<<') 
     print("send_jpg time :",time.time()-timestamp,"ms")
   
-send_jpg('/home/pi/3.jpg')  
+while True:  
+    send_jpg('/home/pi/1.jpg') 
+    time.sleep(5)
+    send_jpg('/home/pi/2.jpg')   
+    time.sleep(5)
+    send_jpg('/home/pi/3.jpg')  
+    time.sleep(5)
 spi.close() 
 
 
